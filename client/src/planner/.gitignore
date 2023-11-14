@@ -1,0 +1,9 @@
+.idea
+npm-debug.log
+node_modules
+dist/*
+!dist/index.html
+.vscode
+demo/dist
+.npmrc
+**/.DS_Store

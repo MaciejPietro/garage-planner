@@ -1,0 +1,1 @@
+export const WAREHOUSE_HEIGHT = 500;
