@@ -151,7 +151,7 @@ class RoofCombiner {
   }
 
   async importObjects() {
-    importObj("public/assets/objects/window/window")
+    importObj("/assets/objects/window/window")
       .then((loadedObject: any) => {
         loadedObject.position.set(0.02, 1, -1.4);
         loadedObject.rotation.y = Math.PI * 0.5;
