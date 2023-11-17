@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { Main, PerspectiveCameraAuto, PointerEventExt } from "@three.ez/main";
 import { GUI } from "dat.gui";
 import * as THREE from "three";

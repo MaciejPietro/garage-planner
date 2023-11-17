@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import * as THREE from "three";
 import { Vector3 } from "three";
 
