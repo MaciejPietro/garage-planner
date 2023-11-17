@@ -62,7 +62,7 @@ export class GateMesh extends THREE.Mesh {
     });
 
     const texture = new THREE.TextureLoader().load(
-      "src/planner/textures/gate.jpg"
+      "public/assets/textures/gate.jpg"
     );
     texture.repeat.set(0.6, 0.6);
     texture.wrapS = THREE.RepeatWrapping;

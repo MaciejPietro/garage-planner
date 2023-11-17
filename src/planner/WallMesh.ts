@@ -73,7 +73,7 @@ export class WallMesh extends THREE.Mesh {
     });
 
     const texture = new THREE.TextureLoader().load(
-      "src/planner/textures/bricks.jpg"
+      "public/assets/textures/bricks.jpg"
     );
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
@@ -81,7 +81,7 @@ export class WallMesh extends THREE.Mesh {
     material.map = texture;
 
     const normalTexture = new THREE.TextureLoader().load(
-      "src/planner/textures/bricks-normal.jpg"
+      "public/assets/textures/bricks-normal.jpg"
     );
     normalTexture.wrapS = THREE.RepeatWrapping;
     normalTexture.wrapT = THREE.RepeatWrapping;

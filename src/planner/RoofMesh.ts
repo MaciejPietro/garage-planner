@@ -62,7 +62,7 @@ export class RoofMesh extends THREE.Mesh {
     });
 
     const texture = new THREE.TextureLoader().load(
-      "src/planner/textures/painted.jpg"
+      "public/assets/textures/painted.jpg"
     );
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
