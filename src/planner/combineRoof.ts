@@ -5,11 +5,18 @@ import { GUI } from "dat.gui";
 import * as THREE from "three";
 import { GridHelper, Vector3 } from "three";
 import { MapControls } from "three/examples/jsm/controls/MapControls.js";
+import { windowCut } from "../lib/data";
+import { getdropRoof } from "../lib/roofs/dropRoof";
+import { getGateSurface } from "../lib/gates";
 
-import { cmToM } from "./helpers";
+import { cmToM, mToCm } from "./helpers";
 
 import { WallMesh, WallMeshType } from "./WallMesh";
-import { RoofMesh, RoofMeshType } from "./RoofMesh";
+import { WallMeshBack } from "./WallMeshBack";
+
+import { DROP_ROTATION } from "../lib/roofs/dropRoof";
+
+import { RoofMesh } from "./RoofMesh";
 
 import { CAMERA, COLORS, NAMES } from "./constants";
 import { GateMesh } from "./GateMesh";
@@ -21,6 +28,8 @@ type PointerEvent =
       THREE.Object3D<THREE.Object3DEventMap>
     >
   | undefined;
+
+const wallHeight = 2;
 
 class RoofCombiner {
   renderer: THREE.Renderer;
@@ -65,7 +74,10 @@ class RoofCombiner {
       animate: this.animate.bind(this),
       fullscreen: false,
       backgroundColor: new THREE.Color(COLORS.roof3d_background),
-      rendererParameters: { antialias: true, canvas: this.domNode },
+      rendererParameters: {
+        antialias: true,
+        canvas: this.domNode,
+      },
       showStats: process.env.NODE_ENV === "development",
     });
 
@@ -75,13 +87,15 @@ class RoofCombiner {
 
     this.initHelpers();
 
+    this.initFloor();
+
     this.initLights();
 
     this.renderer = main.renderer;
+    this.renderer.localClippingEnabled = true;
 
     this.initCamera();
 
-    this.drawSurfaces(this.offerSurfaces);
     this.scene.add(this.surfaces);
 
     this.scene.continuousRaycasting = true;
@@ -92,16 +106,12 @@ class RoofCombiner {
       camera: this.camera,
     });
 
-    this.centerCamera();
-
     this.initGui();
 
     this.scene.on(
       ["pointerdown", "pointerup"],
       this.disableMapControlsWhenDragging.bind(this)
     );
-
-    this.importObjects();
   }
 
   animate() {
@@ -114,46 +124,75 @@ class RoofCombiner {
 
     if (!this.gui) return;
 
-    const lightFolder = this.gui.addFolder("Light");
+    const helpersFolder = this.gui.addFolder("Helpers");
 
-    const data = {
-      color: this.lights.directionalLight.color.getHex(),
-    };
+    helpersFolder.add(this.axesHelper, "visible").name("Axes Helper");
+    helpersFolder.add(this.gridHelper, "visible").name("Grid Helper");
 
-    lightFolder.addColor(data, "color").onChange(() => {
-      this.lights.directionalLight.color.setHex(
-        Number(data.color.toString().replace("#", "0x"))
-      );
-    });
-    lightFolder.add(
-      this.lights.directionalLight,
-      "intensity",
-      0,
-      Math.PI * 2,
-      0.01
-    );
-    lightFolder.add(this.helpers.directionalLightHelper, "visible");
-    lightFolder.add(this.helpers.directionalLightHelper2, "visible");
+    // const data = {
+    //   color: this.lights.directionalLight.color.getHex(),
+    // };
+
+    // lightFolder.addColor(data, "color").onChange(() => {
+    //   this.lights.directionalLight.color.setHex(
+    //     Number(data.color.toString().replace("#", "0x"))
+    //   );
+    // });
+    // lightFolder.add(
+    //   this.lights.directionalLight,
+    //   "intensity",
+    //   0,
+    //   Math.PI * 2,
+    //   0.01
+    // );
+    // lightFolder.add(this.helpers.directionalLightHelper, "visible");
+    // lightFolder.add(this.helpers.directionalLightHelper2, "visible");
   }
 
   initHelpers() {
-    const axesHelper = new THREE.AxesHelper(5000);
+    this.axesHelper = new THREE.AxesHelper(5000);
+    this.axesHelper.visible = false;
+    this.scene.add(this.axesHelper);
 
-    axesHelper.interceptByRaycaster = false;
-
-    this.scene.add(axesHelper);
-
-    const gridHelper = new THREE.GridHelper(100, 100, 0x5555ff, 0xf3f3f3);
-
-    gridHelper.interceptByRaycaster = false;
-
-    this.scene.add(gridHelper);
+    this.gridHelper = new THREE.GridHelper(10, 10, 0x5555ff, 0xf3f3f3);
+    this.gridHelper.visible = false;
+    this.scene.add(this.gridHelper);
   }
 
-  async importObjects() {
+  initFloor() {
+    const floorGeometry = new THREE.PlaneGeometry(10, 10, 10, 10);
+    const floorMaterial = new THREE.MeshBasicMaterial({
+      color: 0x00ff00,
+    });
+
+    const texture = new THREE.TextureLoader().load(
+      "/assets/textures/grass.jpg"
+    );
+    texture.repeat.set(4, 4);
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    // texture.rotation = Math.PI * 0.5;
+    floorMaterial.map = texture;
+
+    const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+    floor.position.set(2, -0.04, -2);
+    floor.rotation.x = -Math.PI / 2; // Rotate the floor to make it horizontal
+    this.scene.add(floor);
+  }
+
+  async addWindow({ x, y }) {
+    this.removeObjectByName("WINDOW");
     importObj("/assets/objects/window/window")
       .then((loadedObject: any) => {
-        loadedObject.position.set(0.02, 1, -1.4);
+        loadedObject.name = "WINDOW";
+        const windowSize = 1;
+        const windowWidth = 0.5;
+
+        loadedObject.position.set(
+          0,
+          y / 100 + windowSize / 2 + -0.05,
+          -x / 100 + windowWidth / 2 + 0.02
+        );
         loadedObject.rotation.y = Math.PI * 0.5;
 
         this.scene.add(loadedObject);
@@ -170,31 +209,172 @@ class RoofCombiner {
         : true;
   }
 
-  drawSurfaces(surfaces: any) {
-    if (!surfaces?.length) return;
-    surfaces.forEach((osurface: any) => {
-      let mesh;
-      if (osurface.type === "wall") {
-        mesh = new WallMesh(osurface, this.onSurfaceUpdate);
-      } else if (osurface.type === "roof") {
-        mesh = new RoofMesh(osurface, this.onSurfaceUpdate);
-      } else if (osurface.type === "gate") {
-        mesh = new GateMesh(osurface, this.onSurfaceUpdate);
+  renderWalls(dimension, height, texturePath) {
+    this.removeObjectByName("WALL");
+
+    this.dimension = dimension.settings;
+
+    const { width, length } = dimension.settings;
+
+    const wallHeight = mToCm(height);
+
+    const frontWidth = mToCm(width);
+    const sideWidth = mToCm(length);
+
+    const additionalWallHeight = mToCm(0.5);
+
+    const walls = ["front", "left", "back", "right"].map((pos) => {
+      const isFront = pos === "front";
+      const isLeft = pos === "left";
+      const isBack = pos === "back";
+      const isRight = pos === "right";
+
+      if (isLeft) {
+        this.addWindow({ x: sideWidth / 2, y: 55 });
       }
 
-      if (mesh) {
-        this.surfaces.add(mesh);
+      return {
+        type: "WALL",
+        position: pos,
+        points: [
+          {
+            x: 0,
+            y: 0,
+          },
+          {
+            x: isFront || isBack ? frontWidth : sideWidth,
+            y: 0,
+          },
+          {
+            x: isFront || isBack ? frontWidth : sideWidth,
+            y: wallHeight + additionalWallHeight,
+          },
+          {
+            x: 0,
+            y: wallHeight + additionalWallHeight,
+          },
+        ],
+        cuts: isLeft
+          ? [
+              {
+                ...windowCut,
+                settings: {
+                  position: {
+                    x: sideWidth / 2,
+                    y: 50,
+                    // x: 150,
+                    // y: 55,
+                  },
+                },
+              },
+            ]
+          : [],
+        settings: {
+          position3d: {
+            x: isBack || isRight ? width : 0,
+            y: 0,
+            z: isBack || isLeft ? -length : 0,
+          },
+          rotation3d: {
+            x: 0,
+            y: isBack
+              ? Math.PI
+              : isLeft
+              ? Math.PI * -0.5
+              : isRight
+              ? Math.PI * 0.5
+              : 0,
+            z: 0,
+          },
+        },
+      };
+    });
 
-        mesh.on("focusin", () => {
-          this.setSelectedSurface(osurface.type);
-        });
-      }
+    walls.forEach((wall) => {
+      const planes = this.getClippingPlanesFromRoof();
+
+      const mesh = new WallMesh(wall, texturePath);
+      mesh.material.clippingPlanes = planes;
+      mesh.material.clipIntersection = true;
+
+      const meshBack = new WallMeshBack(wall, false);
+      meshBack.material.clippingPlanes = planes;
+      meshBack.material.clipIntersection = true;
+
+      this.scene.add(mesh);
+      this.scene.add(meshBack);
     });
   }
 
-  renderRoof(roof: any) {
+  renderRoof(roof: any, dimension, wallHeight: number) {
     this.removeObjectByName("ROOF");
-    this.drawSurfaces(roof);
+
+    let roofSurfaces = () => [];
+
+    switch (roof.name) {
+      case "dropBack":
+      case "dropLeft":
+      case "dropRight":
+        roofSurfaces = getdropRoof;
+        break;
+    }
+    roofSurfaces({
+      name: roof.name,
+      wallHeight,
+      dimension: dimension.settings,
+    }).forEach((surface) => {
+      const mesh = new RoofMesh(surface);
+
+      this.roofMesh = mesh;
+
+      this.scene.add(mesh);
+    });
+  }
+
+  renderGate(gate, dimension) {
+    this.removeObjectByName("GATE");
+    const mesh = new GateMesh(
+      getGateSurface({ width: gate.width.value, height: gate.height.value }),
+      gate
+    );
+    mesh.position.x = mesh.position.x + dimension.settings.width / 2;
+    this.scene.add(mesh);
+  }
+
+  getClippingPlanesFromRoof() {
+    const { rotation } = this.roofMesh;
+
+    const rotatedToLeft = rotation.y < 0;
+    const rotatedToRight = rotation.y > 0;
+
+    const shouldAccountLowestPoint = rotatedToLeft || rotatedToRight;
+
+    const box = new THREE.Box3().setFromObject(this.roofMesh);
+
+    const normalX = rotatedToLeft
+      ? DROP_ROTATION
+      : rotatedToRight
+      ? -DROP_ROTATION
+      : 0;
+
+    const normalY = shouldAccountLowestPoint ? 0 : DROP_ROTATION;
+
+    const normal = new THREE.Vector3(normalX, -1, normalY);
+
+    const correctionYAxisFactor = rotatedToLeft ? 0.03 : -0.05;
+    const yPos =
+      (rotatedToLeft ? box.min.y : box.max.y) + correctionYAxisFactor;
+    const plane = new THREE.Plane(normal, yPos);
+    const planes = [plane];
+
+    // const helpers = new THREE.Group();
+    // planes.forEach((plane) => {
+    //   helpers.add(new THREE.PlaneHelper(plane, 1, 0xff0000));
+    // });
+
+    // this.scene.add(helpers);
+
+    return planes;
   }
 
   removeObjectByName(name: string) {
@@ -215,7 +395,7 @@ class RoofCombiner {
     this.scene.add(this.lights.ambientLight);
 
     // DirectionalLight
-    const light = new THREE.DirectionalLight(0xffffff, 6);
+    const light = new THREE.DirectionalLight(0xffffff, 10);
 
     this.lights.directionalLight = light;
 
@@ -291,6 +471,9 @@ class RoofCombiner {
     this.cameraControls.maxDistance = 100;
     this.cameraControls.maxPolarAngle = Math.PI / 2;
 
+    this.cameraControls.autoRotate = true;
+    this.cameraControls.autoRotateSpeed = 0.6;
+
     this.cameraControls.update();
   }
 
@@ -311,38 +494,13 @@ class RoofCombiner {
     console.log("click on", type);
   }
 
-  getRoofBoundings() {
-    if (!this.surfaces.children.length) {
-      const defaultVector = new Vector3(0, 0, 0);
-
-      return {
-        min: defaultVector,
-        max: defaultVector,
-        center: defaultVector,
-        size: defaultVector,
-      };
-    }
-    const box = new THREE.Box3().setFromObject(this.surfaces);
-
-    const center = box.getCenter(new Vector3());
-    const size = box.getSize(new Vector3());
-
-    return { ...box, size, center };
-  }
-
   centerCamera() {
-    const { center, size, max } = this.getRoofBoundings();
+    const { width, length } = this.dimension;
 
     if (this.cameraControls) {
-      const cameraPositionY =
-        Math.max(size.x, size.z) +
-        max.y +
-        CAMERA.CENTERING_OFFSET_Y +
-        this.surfaces.position.y;
-
-      this.camera?.position.set(center.x, cameraPositionY, center.z);
-
-      this.cameraControls.target = center;
+      this.camera.angle;
+      this.camera?.position.set(width / 2, 10, 10);
+      this.cameraControls.target = new THREE.Vector3(width / 2, 0, -length / 2);
     }
   }
 }

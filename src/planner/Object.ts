@@ -13,8 +13,6 @@ export default function importObj(basePath = "") {
       objLoader.load(
         basePath + ".obj",
         (obj) => {
-          console.log("xd", obj);
-
           // Set the scale of the loaded object
           obj.scale.set(0.005, 0.005, 0.005);
 

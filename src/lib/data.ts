@@ -1,5 +1,30 @@
-import GambleRoof from "./roofs/gambleRoof";
-import BackDropRoof from "./roofs/backDropRoof";
+export const windowCut = {
+  type: "window",
+  points: [
+    {
+      x: 0,
+      y: 0,
+    },
+    {
+      x: 55,
+      y: 0,
+    },
+    {
+      x: 55,
+      y: 100,
+    },
+    {
+      x: 0,
+      y: 100,
+    },
+  ],
+  settings: {
+    position: {
+      x: 0,
+      y: 0,
+    },
+  },
+};
 
 const surfacePoints = [
   {
@@ -41,35 +66,7 @@ const firstSurface = {
 const secondSurface = {
   type: "wall",
   points: surfacePoints,
-  cuts: [
-    {
-      type: "window",
-      points: [
-        {
-          x: 0,
-          y: 0,
-        },
-        {
-          x: 0,
-          y: 55,
-        },
-        {
-          x: 100,
-          y: 55,
-        },
-        {
-          x: 100,
-          y: 0,
-        },
-      ],
-      settings: {
-        position: {
-          x: 233,
-          y: 50,
-        },
-      },
-    },
-  ],
+  cuts: [windowCut],
   settings: {
     position3d: {
       x: 0,
@@ -120,52 +117,11 @@ const fourthSurface = {
   },
 };
 
-const gatePoints = [
-  {
-    x: 0,
-    y: 0,
-  },
-  {
-    x: 0,
-    y: 166,
-  },
-  {
-    x: 160,
-    y: 166,
-  },
-  {
-    x: 160,
-    y: 0,
-  },
-];
-
-const gateSurface = {
-  type: "gate",
-  points: gatePoints,
-  cuts: [],
-  settings: {
-    position3d: {
-      x: 1.15,
-      y: 0,
-      z: 0.02,
-    },
-    rotation3d: {
-      x: 0,
-      y: Math.PI * 0.5,
-      z: Math.PI * 0.5,
-    },
-  },
-};
-
 export const surfaces = [
   firstSurface,
   secondSurface,
   thirdSurface,
   fourthSurface,
-  gateSurface,
 ];
 
-export const roofs = {
-  gamble: GambleRoof,
-  backDrop: BackDropRoof,
-};
+export const roofs = {};

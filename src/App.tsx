@@ -8,7 +8,9 @@ import { usePlannerStore } from "./store";
 
 function App() {
   const [roof3d, setRoof3d] = useState<any>(null);
-  const roof = usePlannerStore((state: any) => state.roof);
+  const { roof, dimension, height, wallTexture, gate } = usePlannerStore(
+    (state: any) => state
+  );
 
   useEffect(() => {
     let roof3dInstance: any = null;
@@ -19,8 +21,13 @@ function App() {
       setRoof3d(roof3dInstance);
       roof3dInstance.init("planner", surfaces, () => undefined);
 
-      const allRoofs = roofs as any;
-      roof3dInstance.renderRoof(allRoofs[roof] as any);
+      const wallHeight = height.settings.height;
+      const wallTexturePath = wallTexture.path;
+
+      roof3dInstance.renderRoof(roof, dimension, wallHeight);
+      roof3dInstance.renderWalls(dimension, wallHeight, wallTexturePath);
+      roof3dInstance.renderGate(gate, dimension);
+      roof3dInstance.centerCamera();
     }
 
     return () => {
@@ -30,10 +37,14 @@ function App() {
 
   useEffect(() => {
     if (roof3d) {
-      const allRoofs = roofs as any;
-      roof3d.renderRoof(allRoofs[roof] as any);
+      const wallHeight = height.settings.height;
+      const wallTexturePath = wallTexture.path;
+
+      roof3d.renderRoof(roof, dimension, wallHeight);
+      roof3d.renderWalls(dimension, wallHeight, wallTexturePath);
+      roof3d.renderGate(gate, dimension);
     }
-  }, [roof]);
+  }, [dimension, height, roof, wallTexture, gate]);
 
   return (
     <div className="grid grid-cols-5 gap-16 w-full">
@@ -42,7 +53,6 @@ function App() {
       </div>
       <div className="col-span-2">
         <Toolbar />
-        <div className="flex gap-2 mt-4">Dach {roof}</div>
       </div>
     </div>
   );

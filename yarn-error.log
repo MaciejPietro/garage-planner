@@ -1,5 +1,5 @@
 Arguments: 
-  C:\Program Files\nodejs\node.exe C:\Users\Maciej\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add @heroicons/react
+  C:\Program Files\nodejs\node.exe C:\Users\Maciej\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add primereact
 
 PATH: 
   C:\Users\Maciej\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\local\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\Maciej\bin;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Windows\System32\OpenSSH;C:\xampp\php;C:\composer;C:\Users\Maciej\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files (x86)\QuickTime\QTSystem;C:\Program Files\Git\cmd;C:\Program Files\nodejs;C:\Program Files\PuTTY;C:\Program Files\Go\bin;C:\laragon\bin;C:\laragon\bin\apache\httpd-2.4.47-win64-VS16\bin;C:\laragon\bin\composer;C:\laragon\bin\git\bin;C:\laragon\bin\git\cmd;C:\laragon\bin\git\mingw64\bin;C:\laragon\bin\git\usr\bin;C:\laragon\bin\laragon\utils;C:\laragon\bin\mysql\mysql-5.7.33-winx64\bin;C:\laragon\bin\nginx\nginx-1.19.10;C:\laragon\bin\ngrok;C:\laragon\bin\notepad++;C:\laragon\bin\php\php-8.2.9-nts-Win32-vs16-x64;C:\laragon\bin\redis\redis-x64-3.2.100;C:\laragon\bin\telnet;C:\laragon\usr\bin;C:\Users\Maciej\AppData\Local\Yarn\config\global\node_modules\.bin;C:\Users\Maciej\AppData\Roaming\Composer\vendor\bin;C:\Users\Maciej\.windows-build-tools\python27;C:\Users\Maciej\AppData\Local\Microsoft\WindowsApps;C:\Users\Maciej\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\Maciej\AppData\Roaming\nvm;C:\Users\Maciej\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files\nodejs;C:\Users\Maciej\AppData\Roaming\npm;C:\Users\Maciej\go\bin;C:\Program Files\Git\usr\bin\vendor_perl;C:\Program Files\Git\usr\bin\core_perl
@@ -14,7 +14,7 @@ Platform:
   win32 x64
 
 Trace: 
-  Error: EPERM: operation not permitted, unlink 'C:\laragon\www\creator\planner2\node_modules\@esbuild\win32-x64\esbuild.exe'
+  Error: EPERM: operation not permitted, unlink 'C:\laragon\www\garage-planner\node_modules\@esbuild\win32-x64\esbuild.exe'
 
 npm manifest: 
   {
@@ -31,7 +31,8 @@ npm manifest:
       "dat.gui": "^0.7.9",
       "react": "^18.2.0",
       "react-dom": "^18.2.0",
-      "three": "^0.158.0"
+      "three": "^0.158.0",
+      "zustand": "^4.4.6"
     },
     "devDependencies": {
       "@gsimone/codesandbox-vite-plugin": "^0.0.2",
@@ -489,7 +490,7 @@ Lockfile:
     dependencies:
       "@types/react" "*"
   
-  "@types/react@*", "@types/react@^18.2.37":
+  "@types/react@*", "@types/react@^18.2.37", "@types/react@>=16.8":
     version "18.2.37"
     resolved "https://registry.npmjs.org/@types/react/-/react-18.2.37.tgz"
     integrity sha512-RGAYMi2bhRgEXT3f4B92WTohopH6bIXw05FuGlmJEnv/omEn190+QYEIYxIAuIBdKgboYYdVved2p1AxZVQnaw==
@@ -1879,7 +1880,7 @@ Lockfile:
     resolved "https://registry.npmjs.org/react-refresh/-/react-refresh-0.14.0.tgz"
     integrity sha512-wViHqhAd8OHeLS/IRMJjTSDHF3U9eWi62F/MledQGPdJGDhodXJ9PBLNGr6WWL7qlH12Mt3TyTpbS+hGXMjCzQ==
   
-  react@^18.0.0, react@^18.2.0:
+  "react@^16.8.0 || ^17.0.0 || ^18.0.0", react@^18.0.0, react@^18.2.0, react@>=16.8:
     version "18.2.0"
     resolved "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
     integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==
@@ -2246,6 +2247,11 @@ Lockfile:
       querystringify "^2.1.1"
       requires-port "^1.0.0"
   
+  use-sync-external-store@1.2.0:
+    version "1.2.0"
+    resolved "https://registry.npmjs.org/use-sync-external-store/-/use-sync-external-store-1.2.0.tgz"
+    integrity sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==
+  
   util-deprecate@^1.0.2:
     version "1.0.2"
     resolved "https://registry.npmjs.org/util-deprecate/-/util-deprecate-1.0.2.tgz"
@@ -2432,3 +2438,10 @@ Lockfile:
     version "1.0.0"
     resolved "https://registry.npmjs.org/yocto-queue/-/yocto-queue-1.0.0.tgz"
     integrity sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==
+  
+  zustand@^4.4.6:
+    version "4.4.6"
+    resolved "https://registry.npmjs.org/zustand/-/zustand-4.4.6.tgz"
+    integrity sha512-Rb16eW55gqL4W2XZpJh0fnrATxYEG3Apl2gfHTyDSE965x/zxslTikpNch0JgNjJA9zK6gEFW8Fl6d1rTZaqgg==
+    dependencies:
+      use-sync-external-store "1.2.0"
